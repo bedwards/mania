@@ -1,0 +1,9 @@
+**/*.csv
+**/*.json
+**/*.joblib
+**/catboost_info
+**/__pycache__
+**/.ipynb_checkpoints
+**/.DS_Store
+**/*.egg-info/
+**/attic
