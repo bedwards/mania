@@ -19,6 +19,7 @@ from itertools import combinations
 import numpy as np
 import pandas as pd
 
+pd.set_option("display.expand_frame_repr", False)
 input_dir = "march-machine-learning-mania-2025"
 output_dir = "output"
 os.makedirs(output_dir, exist_ok=True)
@@ -73,7 +74,7 @@ print("MTeamConferences\n", MTeamConferences, "\n")
 print("WTeamConferences\n", WTeamConferences, "\n")
 
 
-# In[12]:
+# In[3]:
 
 
 path = f"{output_dir}/SubmissionIDAll.csv"
@@ -123,7 +124,7 @@ else:
 print(sub)
 
 
-# In[13]:
+# In[4]:
 
 
 path = f"{output_dir}/SubmissionStage1.csv"
@@ -139,6 +140,48 @@ else:
 
 assert all(SampleSubmissionStage1 == SubmissionStage1)
 print(SubmissionStage1)
+
+
+# In[11]:
+
+
+for gender in ["M", "W"]:
+    for result_type in ["RegularSeason", "NCAATourney", "SecondaryTourney"]:
+        df_name = gender + result_type + "CompactResults"
+        print(df_name)
+        print(globals()[df_name])
+
+
+# In[23]:
+
+
+Y = pd.DataFrame()
+
+for gender in ["M", "W"]:
+    for result_type in ["RegularSeason", "NCAATourney", "SecondaryTourney"]:
+        results = globals()[gender + result_type + "CompactResults"]
+        mask = results["WTeamID"] < results["LTeamID"]
+        results.loc[mask, "TeamID_1"] = results.loc[mask, "WTeamID"]
+        results.loc[mask, "TeamID_2"] = results.loc[mask, "LTeamID"]
+        results.loc[~mask, "TeamID_1"] = results.loc[~mask, "LTeamID"]
+        results.loc[~mask, "TeamID_2"] = results.loc[~mask, "WTeamID"]
+        results["TeamID_1"] = results["TeamID_1"].astype(int)
+        results["TeamID_2"] = results["TeamID_2"].astype(int)
+        results["ID"] = (
+            results["Season"].astype(str)
+            + "_"
+            + results["TeamID_1"].astype(str)
+            + "_"
+            + results["TeamID_2"].astype(str)
+        )
+        results["y_true"] = (results["WTeamID"] < results["LTeamID"]).astype(int)
+        results = results[
+            ["ID", "Season", "TeamID_1", "TeamID_2", "WTeamID", "LTeamID", "y_true"]
+        ]
+        Y = pd.concat([Y, results])
+
+Y = Y.set_index("ID").sort_index()
+print(Y)
 
 
 # In[ ]:
