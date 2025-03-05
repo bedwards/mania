@@ -204,7 +204,7 @@ def process_results(results):
 # In[7]:
 
 
-Y = pd.DataFrame()
+Y_all = pd.DataFrame()
 
 for gender in ["M", "W"]:
     for part in ["RegularSeason", "NCAATourney", "SecondaryTourney"]:
@@ -226,12 +226,12 @@ for gender in ["M", "W"]:
                 "y_true",
             ]
         ]
-        Y = pd.concat([Y, results])
+        Y_all = pd.concat([Y_all, results])
 
-assert Y["index"].nunique() == Y.shape[0]
-Y = Y.set_index("index").sort_index()
-print("Y")
-p(Y)
+assert Y_all["index"].nunique() == Y_all.shape[0]
+Y_all = Y_all.set_index("index").sort_index()
+print("Y_all")
+p(Y_all)
 print()
 
 
@@ -305,15 +305,18 @@ print()
 
 
 for part in ["RegularSeason", "NCAATourney", "SecondaryTourney"]:
-    print(f"{part:>16} {Y[(Y['Season']>2002) & (Y['Part']==part)].shape[0]:>6}")
+    print(
+        f"{part:>16} {Y_all[(Y_all['Season']>2002) & (Y_all['Part']==part)].shape[0]:>6}"
+    )
 
-print(f"{' '*16} {Y[Y['Season']>2002].shape[0]:>6}")
+print(f"{' '*16} {Y_all[Y_all['Season']>2002].shape[0]:>6}")
 
 
 # In[11]:
 
 
-cols_single = ["index", "ID", "DayNum", "Season", "NumOT"]
+df = GameStatsByID.reset_index().rename(columns={"index": "GameStatsByID_index"})
+cols_single = ["GameStatsByID_index", "ID", "DayNum", "Season", "NumOT"]
 cols_double = [
     "TeamID",
     "Loc",
@@ -332,7 +335,6 @@ cols_double = [
     "Blk",
     "PF",
 ]
-df = GameStatsByID.reset_index()
 GameStatsByTeam = pd.DataFrame(
     {c: df[[f"{c}_1", f"{c}_2"]].values.flatten() for c in cols_double}
 )
@@ -340,9 +342,12 @@ GameStatsByTeam = pd.DataFrame(
 for col in cols_single:
     GameStatsByTeam[col] = np.repeat(df[col].values, 2)
 
-GameStatsByTeam["byID_index"] = GameStatsByTeam["index"]
+GameStatsByTeam["index"] = (
+    GameStatsByTeam["GameStatsByID_index"] + "_" + np.tile(["1", "2"], len(df))
+)
+
 GameStatsByTeam = GameStatsByTeam[
-    ["byID_index"] + cols_single[:-1] + ["TeamID", "NumOT"] + cols_double[1:]
+    ["index"] + cols_single[:-1] + ["TeamID", "NumOT"] + cols_double[1:]
 ]
 paired_indices = np.tile([1, 0], len(df))
 game_indices = np.repeat(np.arange(len(df)), 2)
@@ -352,10 +357,126 @@ for col in cols_double[1:]:  # Skip TeamID
         game_indices * 2 + paired_indices
     ]
 
-GameStatsByTeam["index"] = GameStatsByTeam["index"] + "_" + np.tile(["1", "2"], len(df))
 GameStatsByTeam = GameStatsByTeam.set_index("index").sort_index()
 print("GameStatsByTeam")
 p(GameStatsByTeam)
+print()
+
+
+# In[12]:
+
+
+df = GameStatsByTeam.reset_index().rename(columns={"index": "GameStatsByTeam_index"})
+groupby = ["Season", "TeamID"]
+mean = [
+    "NumOT",
+    "Score",
+    "FGM",
+    "FGA",
+    "FGM3",
+    "FGA3",
+    "FTM",
+    "FTA",
+    "OR",
+    "DR",
+    "Ast",
+    "TO",
+    "Stl",
+    "Blk",
+    "PF",
+    "Score_o",
+    "FGM_o",
+    "FGA_o",
+    "FGM3_o",
+    "FGA3_o",
+    "FTM_o",
+    "FTA_o",
+    "OR_o",
+    "DR_o",
+    "Ast_o",
+    "TO_o",
+    "Stl_o",
+    "Blk_o",
+    "PF_o",
+]
+
+SeasonStats = pd.concat(
+    [
+        pd.crosstab(
+            [df["Season"], df["TeamID"]],
+            [df["Loc"]],
+            normalize="index",
+        ),
+        df.groupby(groupby)[mean].mean(),
+    ],
+    axis=1,
+)
+
+SeasonStats.sort_index()
+print("SeasonStats")
+p(SeasonStats)
+print()
+
+
+# In[13]:
+
+
+s = GameStatsByTeam.loc[
+    (GameStatsByTeam["Season"] == 2003) & (GameStatsByTeam["TeamID"] == 1103), "NumOT"
+]
+print(sorted(s.to_list()))
+print(s.sum(), s.count(), f"{s.mean():.4f}")
+
+
+# In[37]:
+
+
+min_year_women_detailed = SeasonStats[
+    SeasonStats.index.get_level_values("TeamID") > 2999
+].index.min()[0]
+print(min_year_women_detailed)
+cols_shared = ["Season", "ID", "DayNum", "Part", "y_true"]
+Y_teams = []
+
+for suffix in ["1", "2"]:
+    Y_team = Y_all.rename(columns={f"TeamID_{suffix}": "TeamID"})
+    Y_team = Y_team[Y_team["Season"] >= min_year_women_detailed]
+    Y_team = Y_team.reset_index().set_index(["Season", "TeamID"]).sort_index()
+
+    if suffix == "1":
+        print(
+            f"{'Y_team':>11} {Y_team.shape} {Y_team[Y_team.index.get_level_values('TeamID')>2999].index.min()}"
+        )
+        print(
+            f"SeasonStats {str(SeasonStats.shape):>11} {SeasonStats[SeasonStats.index.get_level_values('TeamID')>2999].index.min()}"
+        )
+
+    Y_team = Y_team.join(SeasonStats).reset_index()
+    Y_team = Y_team.set_index("index").sort_index()
+    Y_team = Y_team.drop(columns=["WTeamID", "LTeamID"])
+
+    if suffix == "1":
+        Y_team = Y_team.drop(columns=["TeamID_2"])
+    else:
+        Y_team = Y_team.drop(columns=["TeamID_1"] + cols_shared)
+
+    Y_team = Y_team.rename(
+        columns={col: f"{col}_{suffix}" for col in Y_team if col not in cols_shared}
+    )
+    Y_teams.append(Y_team)
+
+train = pd.concat([Y_teams[0], Y_teams[1]], axis=1)
+train = train[
+    cols_shared
+    + ["TeamID_1", "TeamID_2"]
+    + [
+        c
+        for c in train
+        if not c.startswith("TeamID_") and (c.endswith("_1") or c.endswith("_2"))
+    ]
+]
+print("train")
+p(train)
 print()
 
 
