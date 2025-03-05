@@ -17,8 +17,13 @@ warnings.simplefilter("ignore")
 import os
 from glob import glob
 from itertools import combinations
+from collections import Counter, defaultdict
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import xgboost as xgb
+from sklearn.model_selection import KFold
 
 pd.set_option("display.expand_frame_repr", False)
 pd.set_option("display.max_columns", None)
@@ -428,7 +433,7 @@ print(sorted(s.to_list()))
 print(s.sum(), s.count(), f"{s.mean():.4f}")
 
 
-# In[37]:
+# In[14]:
 
 
 min_year_women_detailed = SeasonStats[
@@ -478,6 +483,36 @@ train = train[
 print("train")
 p(train)
 print()
+
+
+# In[45]:
+
+
+kfold = KFold(shuffle=True, random_state=42)
+m = xgb.XGBClassifier(objective="binary:logistic")
+y_pred_oof = np.zeros(len(train))
+
+t = train.reset_index()
+
+for season in sorted(t["Season"].unique()):
+    print(season)
+    t_season = t[t["Season"] == season]
+    X = t_season.drop(columns=["index", "Season", "ID", "Part", "y_true"])
+    y = t_season["y_true"]
+    for fold_n, (i_fold, i_oof) in enumerate(kfold.split(t_season.index)):
+        print(f"  {fold_n}")
+        m.fit(X.iloc[i_fold], y.iloc[i_fold])
+        y_pred = m.predict_proba(X.iloc[i_oof])[:, 1]
+        y_pred_oof[t_season.iloc[i_oof].index] = y_pred
+        if season == min_year_women_detailed and fold_n == 0:
+            sns.histplot(y_pred)
+            plt.show()
+    print()
+
+sns.histplot(y_pred_oof)
+
+
+# In[30]:
 
 
 # In[ ]:
