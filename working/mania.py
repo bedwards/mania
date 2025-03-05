@@ -6,8 +6,9 @@
 
 try:
     get_ipython().run_line_magic("reset", "-f")
+    p = display
 except NameError:
-    pass
+    p = print
 
 import warnings
 
@@ -20,6 +21,8 @@ import numpy as np
 import pandas as pd
 
 pd.set_option("display.expand_frame_repr", False)
+pd.set_option("display.max_columns", None)
+pd.set_option("display.width", None)
 input_dir = "march-machine-learning-mania-2025"
 output_dir = "output"
 os.makedirs(output_dir, exist_ok=True)
@@ -52,8 +55,8 @@ df_names_with_season.sort()
 # for df_name in df_names:
 #     df = globals()[df_name]
 #     print(df_name)
-#     print(df)
-#     print()
+#     p(df)
+#     pring()
 
 print(", ".join(df_names))
 print()
@@ -65,13 +68,27 @@ print("Season:", ", ".join(df_names_with_season))
 # In[2]:
 
 
-print("SampleSubmissionStage1\n", SampleSubmissionStage1, "\n")
-print("SeedBenchmarkStage1\n", SeedBenchmarkStage1, "\n")
-print("SampleSubmissionStage2\n", SampleSubmissionStage2, "\n")
-print("MTeams\n", MTeams, "\n")
-print("WTeams\n", WTeams, "\n")
-print("MTeamConferences\n", MTeamConferences, "\n")
-print("WTeamConferences\n", WTeamConferences, "\n")
+print("SampleSubmissionStage1")
+p(SampleSubmissionStage1)
+print()
+print("SeedBenchmarkStage1")
+p(SeedBenchmarkStage1)
+print()
+print("SampleSubmissionStage2")
+p(SampleSubmissionStage2)
+print()
+print("MTeams")
+p(MTeams)
+print()
+print("WTeams")
+p(WTeams)
+print()
+print("MTeamConferences")
+p(MTeamConferences)
+print()
+print("WTeamConferences")
+p(WTeamConferences)
+print()
 
 
 # In[3]:
@@ -120,8 +137,9 @@ else:
 
     sub = sub.set_index("ID").sort_index()
     sub.to_csv(path)
-
-print(sub)
+print("SubmissionIDAll (sub)")
+p(sub)
+print()
 
 
 # In[4]:
@@ -139,49 +157,206 @@ else:
     SubmissionStage1.to_csv(path)
 
 assert all(SampleSubmissionStage1 == SubmissionStage1)
-print(SubmissionStage1)
+print("SubmissionStage1")
+p(SubmissionStage1)
+print()
 
 
-# In[11]:
+# In[5]:
 
 
 for gender in ["M", "W"]:
     for result_type in ["RegularSeason", "NCAATourney", "SecondaryTourney"]:
         df_name = gender + result_type + "CompactResults"
         print(df_name)
-        print(globals()[df_name])
+        p(globals()[df_name])
+        print()
 
 
-# In[23]:
+# In[6]:
+
+
+def wl_to_12(results, col):
+    dtype = results[f"W{col}"].dtype
+    mask = results["WTeamID"] < results["LTeamID"]
+    results.loc[mask, f"{col}_1"] = results.loc[mask, f"W{col}"]
+    results.loc[mask, f"{col}_2"] = results.loc[mask, f"L{col}"]
+    results.loc[~mask, f"{col}_1"] = results.loc[~mask, f"L{col}"]
+    results.loc[~mask, f"{col}_2"] = results.loc[~mask, f"W{col}"]
+    results[f"{col}_1"] = results[f"{col}_1"].astype(dtype)
+    results[f"{col}_2"] = results[f"{col}_2"].astype(dtype)
+    return results, mask
+
+
+def process_results(results):
+    results, mask = wl_to_12(results, "TeamID")
+    results["ID"] = (
+        results["Season"].astype(str)
+        + "_"
+        + results["TeamID_1"].astype(str)
+        + "_"
+        + results["TeamID_2"].astype(str)
+    )
+    results["index"] = results["ID"] + "_" + results["DayNum"].astype(str)
+    return results, mask
+
+
+# In[7]:
 
 
 Y = pd.DataFrame()
 
 for gender in ["M", "W"]:
-    for result_type in ["RegularSeason", "NCAATourney", "SecondaryTourney"]:
-        results = globals()[gender + result_type + "CompactResults"]
-        mask = results["WTeamID"] < results["LTeamID"]
-        results.loc[mask, "TeamID_1"] = results.loc[mask, "WTeamID"]
-        results.loc[mask, "TeamID_2"] = results.loc[mask, "LTeamID"]
-        results.loc[~mask, "TeamID_1"] = results.loc[~mask, "LTeamID"]
-        results.loc[~mask, "TeamID_2"] = results.loc[~mask, "WTeamID"]
-        results["TeamID_1"] = results["TeamID_1"].astype(int)
-        results["TeamID_2"] = results["TeamID_2"].astype(int)
-        results["ID"] = (
-            results["Season"].astype(str)
-            + "_"
-            + results["TeamID_1"].astype(str)
-            + "_"
-            + results["TeamID_2"].astype(str)
-        )
-        results["y_true"] = (results["WTeamID"] < results["LTeamID"]).astype(int)
+    for part in ["RegularSeason", "NCAATourney", "SecondaryTourney"]:
+        results = globals()[gender + part + "CompactResults"].copy()
+        results, mask = process_results(results)
+        results["Part"] = part
+        results["y_true"] = mask.astype(int)
         results = results[
-            ["ID", "Season", "TeamID_1", "TeamID_2", "WTeamID", "LTeamID", "y_true"]
+            [
+                "index",
+                "ID",
+                "DayNum",
+                "Season",
+                "Part",
+                "TeamID_1",
+                "TeamID_2",
+                "WTeamID",
+                "LTeamID",
+                "y_true",
+            ]
         ]
         Y = pd.concat([Y, results])
 
-Y = Y.set_index("ID").sort_index()
-print(Y)
+assert Y["index"].nunique() == Y.shape[0]
+Y = Y.set_index("index").sort_index()
+print("Y")
+p(Y)
+print()
+
+
+# In[8]:
+
+
+p(MRegularSeasonDetailedResults)
+p(WRegularSeasonDetailedResults)
+
+
+# In[9]:
+
+
+GameStatsByID = pd.DataFrame()
+cols_info = [
+    "index",
+    "ID",
+    "Season",
+    "TeamID_1",
+    "TeamID_2",
+    "DayNum",
+    "NumOT",
+    "Loc_1",
+    "Loc_2",
+]
+cols_stats = [
+    "Score",
+    "FGM",
+    "FGA",
+    "FGM3",
+    "FGA3",
+    "FTM",
+    "FTA",
+    "OR",
+    "DR",
+    "Ast",
+    "TO",
+    "Stl",
+    "Blk",
+    "PF",
+]
+
+for gender in ["M", "W"]:
+    results = globals()[gender + "RegularSeasonDetailedResults"].copy()
+    results, mask = process_results(results)
+
+    for col in cols_stats:
+        results, _ = wl_to_12(results, col)
+
+    results["WLoc"] = results["WLoc"].astype("category")
+    assert sorted(results["WLoc"].cat.categories.to_list()) == ["A", "H", "N"]
+    results["LLoc"] = results["WLoc"].cat.rename_categories({"A": "H", "H": "A"})
+    results, _ = wl_to_12(results, "Loc")
+    cols = cols_info.copy()
+
+    for col in cols_stats:
+        for team in [1, 2]:
+            cols.append(f"{col}_{team}")
+
+    results = results[cols]
+    GameStatsByID = pd.concat([GameStatsByID, results])
+
+assert GameStatsByID["index"].nunique() == GameStatsByID.shape[0]
+GameStatsByID = GameStatsByID.set_index("index").sort_index()
+print("GameStatsByID")
+p(GameStatsByID)
+print()
+
+
+# In[10]:
+
+
+for part in ["RegularSeason", "NCAATourney", "SecondaryTourney"]:
+    print(f"{part:>16} {Y[(Y['Season']>2002) & (Y['Part']==part)].shape[0]:>6}")
+
+print(f"{' '*16} {Y[Y['Season']>2002].shape[0]:>6}")
+
+
+# In[11]:
+
+
+cols_single = ["index", "ID", "DayNum", "Season", "NumOT"]
+cols_double = [
+    "TeamID",
+    "Loc",
+    "Score",
+    "FGM",
+    "FGA",
+    "FGM3",
+    "FGA3",
+    "FTM",
+    "FTA",
+    "OR",
+    "DR",
+    "Ast",
+    "TO",
+    "Stl",
+    "Blk",
+    "PF",
+]
+df = GameStatsByID.reset_index()
+GameStatsByTeam = pd.DataFrame(
+    {c: df[[f"{c}_1", f"{c}_2"]].values.flatten() for c in cols_double}
+)
+
+for col in cols_single:
+    GameStatsByTeam[col] = np.repeat(df[col].values, 2)
+
+GameStatsByTeam["byID_index"] = GameStatsByTeam["index"]
+GameStatsByTeam = GameStatsByTeam[
+    ["byID_index"] + cols_single[:-1] + ["TeamID", "NumOT"] + cols_double[1:]
+]
+paired_indices = np.tile([1, 0], len(df))
+game_indices = np.repeat(np.arange(len(df)), 2)
+
+for col in cols_double[1:]:  # Skip TeamID
+    GameStatsByTeam[f"{col}_o"] = GameStatsByTeam[col].values[
+        game_indices * 2 + paired_indices
+    ]
+
+GameStatsByTeam["index"] = GameStatsByTeam["index"] + "_" + np.tile(["1", "2"], len(df))
+GameStatsByTeam = GameStatsByTeam.set_index("index").sort_index()
+print("GameStatsByTeam")
+p(GameStatsByTeam)
+print()
 
 
 # In[ ]:

@@ -4,135 +4,6 @@ ID: SampleSubmissionStage1, SampleSubmissionStage2, SeedBenchmarkStage1
 
 Season: MConferenceTourneyGames, MGameCities, MMasseyOrdinals, MNCAATourneyCompactResults, MNCAATourneyDetailedResults, MNCAATourneySeeds, MNCAATourneySlots, MRegularSeasonCompactResults, MRegularSeasonDetailedResults, MSeasons, MSecondaryTourneyCompactResults, MSecondaryTourneyTeams, MTeamCoaches, MTeamConferences, WConferenceTourneyGames, WGameCities, WNCAATourneyCompactResults, WNCAATourneyDetailedResults, WNCAATourneySeeds, WNCAATourneySlots, WRegularSeasonCompactResults, WRegularSeasonDetailedResults, WSeasons, WSecondaryTourneyCompactResults, WSecondaryTourneyTeams, WTeamConferences
 SampleSubmissionStage1
-                 Pred
-ID                  
-2021_1101_1102   0.5
-2021_1101_1103   0.5
-2021_1101_1104   0.5
-2021_1101_1105   0.5
-2021_1101_1106   0.5
-...              ...
-2024_3475_3477   0.5
-2024_3475_3478   0.5
-2024_3476_3477   0.5
-2024_3476_3478   0.5
-2024_3477_3478   0.5
-
-[507108 rows x 1 columns] 
-
-SeedBenchmarkStage1
-                 Pred
-ID                  
-2021_1101_1102  0.50
-2021_1101_1103  0.50
-2021_1101_1104  0.14
-2021_1101_1105  0.50
-2021_1101_1106  0.50
-...              ...
-2024_3475_3477  0.50
-2024_3475_3478  0.50
-2024_3476_3477  0.50
-2024_3476_3478  0.50
-2024_3477_3478  0.50
-
-[507108 rows x 1 columns] 
-
-SampleSubmissionStage2
-                 Pred
-ID                  
-2025_1101_1102   0.5
-2025_1101_1103   0.5
-2025_1101_1104   0.5
-2025_1101_1105   0.5
-2025_1101_1106   0.5
-...              ...
-2025_3477_3479   0.5
-2025_3477_3480   0.5
-2025_3478_3479   0.5
-2025_3478_3480   0.5
-2025_3479_3480   0.5
-
-[131407 rows x 1 columns] 
-
-MTeams
-      TeamID        TeamName  FirstD1Season  LastD1Season
-0      1101     Abilene Chr           2014          2025
-1      1102       Air Force           1985          2025
-2      1103           Akron           1985          2025
-3      1104         Alabama           1985          2025
-4      1105     Alabama A&M           2000          2025
-..      ...             ...            ...           ...
-375    1476       Stonehill           2023          2025
-376    1477  East Texas A&M           2023          2025
-377    1478        Le Moyne           2024          2025
-378    1479      Mercyhurst           2025          2025
-379    1480    West Georgia           2025          2025
-
-[380 rows x 4 columns] 
-
-WTeams
-      TeamID        TeamName
-0      3101     Abilene Chr
-1      3102       Air Force
-2      3103           Akron
-3      3104         Alabama
-4      3105     Alabama A&M
-..      ...             ...
-373    3476       Stonehill
-374    3477  East Texas A&M
-375    3478        Le Moyne
-376    3479      Mercyhurst
-377    3480    West Georgia
-
-[378 rows x 2 columns] 
-
-MTeamConferences
-        Season  TeamID ConfAbbrev
-0        1985    1102        wac
-1        1985    1103        ovc
-2        1985    1104        sec
-3        1985    1106       swac
-4        1985    1108       swac
-...       ...     ...        ...
-13383    2025    1476        nec
-13384    2025    1477  southland
-13385    2025    1478        nec
-13386    2025    1479        nec
-13387    2025    1480      a_sun
-
-[13388 rows x 3 columns] 
-
-WTeamConferences
-       Season  TeamID ConfAbbrev
-0       1998    3102        wac
-1       1998    3103        mac
-2       1998    3104        sec
-3       1998    3106       swac
-4       1998    3108       swac
-...      ...     ...        ...
-9485    2025    3476        nec
-9486    2025    3477  southland
-9487    2025    3478        nec
-9488    2025    3479        nec
-9489    2025    3480      a_sun
-
-[9490 rows x 3 columns] 
-
-                Season  TeamID_1 ConfAbbrev_1  TeamID_2 ConfAbbrev_2
-ID                                                                  
-1985_1102_1103    1985      1102          wac      1103          ovc
-1985_1102_1104    1985      1102          wac      1104          sec
-1985_1102_1106    1985      1102          wac      1106         swac
-1985_1102_1108    1985      1102          wac      1108         swac
-1985_1102_1109    1985      1102          wac      1109          ind
-...                ...       ...          ...       ...          ...
-2025_3477_3479    2025      3477    southland      3479          nec
-2025_3477_3480    2025      3477    southland      3480        a_sun
-2025_3478_3479    2025      3478          nec      3479          nec
-2025_3478_3480    2025      3478          nec      3480        a_sun
-2025_3479_3480    2025      3479          nec      3480        a_sun
-
-[3799547 rows x 5 columns]
                 Pred
 ID                  
 2021_1101_1102   0.5
@@ -148,6 +19,139 @@ ID
 2024_3477_3478   0.5
 
 [507108 rows x 1 columns]
+
+SeedBenchmarkStage1
+                Pred
+ID                  
+2021_1101_1102  0.50
+2021_1101_1103  0.50
+2021_1101_1104  0.14
+2021_1101_1105  0.50
+2021_1101_1106  0.50
+...              ...
+2024_3475_3477  0.50
+2024_3475_3478  0.50
+2024_3476_3477  0.50
+2024_3476_3478  0.50
+2024_3477_3478  0.50
+
+[507108 rows x 1 columns]
+
+SampleSubmissionStage2
+                Pred
+ID                  
+2025_1101_1102   0.5
+2025_1101_1103   0.5
+2025_1101_1104   0.5
+2025_1101_1105   0.5
+2025_1101_1106   0.5
+...              ...
+2025_3477_3479   0.5
+2025_3477_3480   0.5
+2025_3478_3479   0.5
+2025_3478_3480   0.5
+2025_3479_3480   0.5
+
+[131407 rows x 1 columns]
+
+MTeams
+     TeamID        TeamName  FirstD1Season  LastD1Season
+0      1101     Abilene Chr           2014          2025
+1      1102       Air Force           1985          2025
+2      1103           Akron           1985          2025
+3      1104         Alabama           1985          2025
+4      1105     Alabama A&M           2000          2025
+..      ...             ...            ...           ...
+375    1476       Stonehill           2023          2025
+376    1477  East Texas A&M           2023          2025
+377    1478        Le Moyne           2024          2025
+378    1479      Mercyhurst           2025          2025
+379    1480    West Georgia           2025          2025
+
+[380 rows x 4 columns]
+
+WTeams
+     TeamID        TeamName
+0      3101     Abilene Chr
+1      3102       Air Force
+2      3103           Akron
+3      3104         Alabama
+4      3105     Alabama A&M
+..      ...             ...
+373    3476       Stonehill
+374    3477  East Texas A&M
+375    3478        Le Moyne
+376    3479      Mercyhurst
+377    3480    West Georgia
+
+[378 rows x 2 columns]
+
+MTeamConferences
+       Season  TeamID ConfAbbrev
+0        1985    1102        wac
+1        1985    1103        ovc
+2        1985    1104        sec
+3        1985    1106       swac
+4        1985    1108       swac
+...       ...     ...        ...
+13383    2025    1476        nec
+13384    2025    1477  southland
+13385    2025    1478        nec
+13386    2025    1479        nec
+13387    2025    1480      a_sun
+
+[13388 rows x 3 columns]
+
+WTeamConferences
+      Season  TeamID ConfAbbrev
+0       1998    3102        wac
+1       1998    3103        mac
+2       1998    3104        sec
+3       1998    3106       swac
+4       1998    3108       swac
+...      ...     ...        ...
+9485    2025    3476        nec
+9486    2025    3477  southland
+9487    2025    3478        nec
+9488    2025    3479        nec
+9489    2025    3480      a_sun
+
+[9490 rows x 3 columns]
+
+SubmissionIDAll (sub)
+                Season  TeamID_1 ConfAbbrev_1  TeamID_2 ConfAbbrev_2
+ID                                                                  
+1985_1102_1103    1985      1102          wac      1103          ovc
+1985_1102_1104    1985      1102          wac      1104          sec
+1985_1102_1106    1985      1102          wac      1106         swac
+1985_1102_1108    1985      1102          wac      1108         swac
+1985_1102_1109    1985      1102          wac      1109          ind
+...                ...       ...          ...       ...          ...
+2025_3477_3479    2025      3477    southland      3479          nec
+2025_3477_3480    2025      3477    southland      3480        a_sun
+2025_3478_3479    2025      3478          nec      3479          nec
+2025_3478_3480    2025      3478          nec      3480        a_sun
+2025_3479_3480    2025      3479          nec      3480        a_sun
+
+[3799547 rows x 5 columns]
+
+SubmissionStage1
+                Pred
+ID                  
+2021_1101_1102   0.5
+2021_1101_1103   0.5
+2021_1101_1104   0.5
+2021_1101_1105   0.5
+2021_1101_1106   0.5
+...              ...
+2024_3475_3477   0.5
+2024_3475_3478   0.5
+2024_3476_3477   0.5
+2024_3476_3478   0.5
+2024_3477_3478   0.5
+
+[507108 rows x 1 columns]
+
 MRegularSeasonCompactResults
         Season  DayNum  WTeamID  WScore  LTeamID  LScore WLoc  NumOT
 0         1985      20     1228      81     1328      64    N      0
@@ -163,6 +167,7 @@ MRegularSeasonCompactResults
 191795    2025     106     1474      89     1146      72    H      0
 
 [191796 rows x 8 columns]
+
 MNCAATourneyCompactResults
       Season  DayNum  WTeamID  WScore  LTeamID  LScore WLoc  NumOT
 0       1985     136     1116      63     1234      54    N      0
@@ -178,6 +183,7 @@ MNCAATourneyCompactResults
 2517    2024     154     1163      75     1345      60    N      0
 
 [2518 rows x 8 columns]
+
 MSecondaryTourneyCompactResults
       Season  DayNum  WTeamID  WScore  LTeamID  LScore WLoc  NumOT SecondaryTourney
 0       1985     136     1151      67     1155      65    H      0              NIT
@@ -193,6 +199,7 @@ MSecondaryTourneyCompactResults
 1808    2024     150     1371      79     1232      77    N      0              NIT
 
 [1809 rows x 9 columns]
+
 WRegularSeasonCompactResults
         Season  DayNum  WTeamID  WScore  LTeamID  LScore WLoc  NumOT
 0         1998      18     3104      91     3202      41    H      0
@@ -208,6 +215,7 @@ WRegularSeasonCompactResults
 135947    2025     106     3404      73     3398      52    H      0
 
 [135948 rows x 8 columns]
+
 WNCAATourneyCompactResults
       Season  DayNum  WTeamID  WScore  LTeamID  LScore WLoc  NumOT
 0       1998     137     3104      94     3422      46    H      0
@@ -223,6 +231,7 @@ WNCAATourneyCompactResults
 1649    2024     153     3376      87     3234      75    N      0
 
 [1650 rows x 8 columns]
+
 WSecondaryTourneyCompactResults
      Season  DayNum  WTeamID  WScore  LTeamID  LScore WLoc  NumOT SecondaryTourney
 0      2013     135     3120      80     3412      57    H      0             WNIT
@@ -238,18 +247,87 @@ WSecondaryTourneyCompactResults
 827    2024     152     3387      69     3278      50    H      0             WNIT
 
 [828 rows x 9 columns]
-                Season  TeamID_1  TeamID_2  WTeamID  LTeamID  y_true
-ID                                                                  
-1985_1102_1109    1985      1102      1109     1102     1109       1
-1985_1102_1135    1985      1102      1135     1135     1102       0
-1985_1102_1140    1985      1102      1140     1140     1102       0
-1985_1102_1140    1985      1102      1140     1102     1140       1
-1985_1102_1140    1985      1102      1140     1140     1102       0
-...                ...       ...       ...      ...      ...     ...
-2025_3476_3478    2025      3476      3478     3478     3476       0
-2025_3476_3479    2025      3476      3479     3476     3479       1
-2025_3476_3479    2025      3476      3479     3476     3479       1
-2025_3478_3479    2025      3478      3479     3479     3478       0
-2025_3478_3479    2025      3478      3479     3478     3479       1
 
-[334549 rows x 6 columns]
+Y
+                                ID  DayNum  Season           Part  TeamID_1  TeamID_2  WTeamID  LTeamID  y_true
+index                                                                                                          
+1985_1102_1109_40   1985_1102_1109      40    1985  RegularSeason      1102      1109     1102     1109       1
+1985_1102_1135_62   1985_1102_1135      62    1985  RegularSeason      1102      1135     1135     1102       0
+1985_1102_1140_110  1985_1102_1140     110    1985  RegularSeason      1102      1140     1140     1102       0
+1985_1102_1140_126  1985_1102_1140     126    1985  RegularSeason      1102      1140     1102     1140       1
+1985_1102_1140_80   1985_1102_1140      80    1985  RegularSeason      1102      1140     1140     1102       0
+...                            ...     ...     ...            ...       ...       ...      ...      ...     ...
+2025_3476_3478_77   2025_3476_3478      77    2025  RegularSeason      3476      3478     3478     3476       0
+2025_3476_3479_103  2025_3476_3479     103    2025  RegularSeason      3476      3479     3476     3479       1
+2025_3476_3479_59   2025_3476_3479      59    2025  RegularSeason      3476      3479     3476     3479       1
+2025_3478_3479_66   2025_3478_3479      66    2025  RegularSeason      3478      3479     3479     3478       0
+2025_3478_3479_96   2025_3478_3479      96    2025  RegularSeason      3478      3479     3478     3479       1
+
+[334549 rows x 9 columns]
+
+        Season  DayNum  WTeamID  WScore  LTeamID  LScore WLoc  NumOT  WFGM  WFGA  WFGM3  WFGA3  WFTM  WFTA  WOR  WDR  WAst  WTO  WStl  WBlk  WPF  LFGM  LFGA  LFGM3  LFGA3  LFTM  LFTA  LOR  LDR  LAst  LTO  LStl  LBlk  LPF
+0         2003      10     1104      68     1328      62    N      0    27    58      3     14    11    18   14   24    13   23     7     1   22    22    53      2     10    16    22   10   22     8   18     9     2   20
+1         2003      10     1272      70     1393      63    N      0    26    62      8     20    10    19   15   28    16   13     4     4   18    24    67      6     24     9    20   20   25     7   12     8     6   16
+2         2003      11     1266      73     1437      61    N      0    24    58      8     18    17    29   17   26    15   10     5     2   25    22    73      3     26    14    23   31   22     9   12     2     5   23
+3         2003      11     1296      56     1457      50    N      0    18    38      3      9    17    31    6   19    11   12    14     2   18    18    49      6     22     8    15   17   20     9   19     4     3   23
+4         2003      11     1400      77     1208      71    N      0    30    61      6     14    11    13   17   22    12   14     4     4   20    24    62      6     16    17    27   21   15    12   10     7     1   14
+...        ...     ...      ...     ...      ...     ...  ...    ...   ...   ...    ...    ...   ...   ...  ...  ...   ...  ...   ...   ...  ...   ...   ...    ...    ...   ...   ...  ...  ...   ...  ...   ...   ...  ...
+117743    2025     106     1461      69     1102      62    H      0    25    54      6     17    13    22    9   27    11    9     3     3   18    23    49      7     23     9    17    2   24    12    8     3     3   24
+117744    2025     106     1462      76     1139      63    H      0    29    68      8     25    10    11    4   29    21    9    14     3   15    24    55      6     23     9    14    4   31    12   20     5     2   12
+117745    2025     106     1466      80     1480      62    H      0    28    55      2     13    22    29    5   30    11    5    10     2   12    27    61      4     18     4     8    6   23    13   13     2     2   18
+117746    2025     106     1468      94     1122      68    H      0    36    58     10     19    12    17    2   27    19    6     4     2   16    20    59     11     32    17    22    7   22    12   10     2     5   17
+117747    2025     106     1474      89     1146      72    H      0    28    52     16     29    17    22    4   17    24    6     7     6   17    23    48     10     23    16    18    5   19     9   15     5     0   17
+
+[117748 rows x 34 columns]
+       Season  DayNum  WTeamID  WScore  LTeamID  LScore WLoc  NumOT  WFGM  WFGA  WFGM3  WFGA3  WFTM  WFTA  WOR  WDR  WAst  WTO  WStl  WBlk  WPF  LFGM  LFGA  LFGM3  LFGA3  LFTM  LFTA  LOR  LDR  LAst  LTO  LStl  LBlk  LPF
+0        2010      11     3103      63     3237      49    H      0    23    54      5      9    12    19   10   26    14   18     7     0   15    20    54      3     13     6    10   11   27    11   23     7     6   19
+1        2010      11     3104      73     3399      68    N      0    26    62      5     12    16    28   16   31    15   20     5     2   25    25    63      4     21    14    27   14   26     7   20     4     2   27
+2        2010      11     3110      71     3224      59    A      0    29    62      6     15     7    12   14   23    18   13     6     2   17    19    58      2     14    19    23   17   23     8   15     6     0   15
+3        2010      11     3111      63     3267      58    A      0    27    52      4     11     5     9    6   40    14   27     5    10   18    18    74      6     26    16    25   22   22    15   11    14     5   14
+4        2010      11     3119      74     3447      70    H      1    30    74      7     20     7    11   14   33    18   11     5     3   18    25    74      9     17    11    21   21   32    12   14     4     2   14
+...       ...     ...      ...     ...      ...     ...  ...    ...   ...   ...    ...    ...   ...   ...  ...  ...   ...  ...   ...   ...  ...   ...   ...    ...    ...   ...   ...  ...  ...   ...  ...   ...   ...  ...
+80621    2025     106     3242      63     3416      58    H      0    17    46      4     17    25    28    5   26     9   12     4     5   16    23    63      7     26     5    11   15   21    11   12     4     2   21
+80622    2025     106     3329      68     3428      64    A      0    23    63      6     23    16    18   18   25     9   17     6     3   21    25    58      5     23     9    16    8   18    16   11     8     6   20
+80623    2025     106     3349      72     3194      39    H      0    30    63     10     24     2     4    5   39    21   10     6     5   14    10    55      3     17    16    23    4   25     5   10     4     3    9
+80624    2025     106     3378      70     3150      52    A      0    25    59      4     17    16    18    8   30    15   12     9     3   16    18    58      5     17    11    14    7   24     5   15     8     2   15
+80625    2025     106     3404      73     3398      52    H      0    24    57      5     14    20    28   13   24    15   19    10     6   13    20    60      3     19     9    15   12   22     8   20    12     2   20
+
+[80626 rows x 34 columns]
+GameStatsByID
+                                ID  Season  TeamID_1  TeamID_2  DayNum  NumOT Loc_1 Loc_2  Score_1  Score_2  FGM_1  FGM_2  FGA_1  FGA_2  FGM3_1  FGM3_2  FGA3_1  FGA3_2  FTM_1  FTM_2  FTA_1  FTA_2  OR_1  OR_2  DR_1  DR_2  Ast_1  Ast_2  TO_1  TO_2  Stl_1  Stl_2  Blk_1  Blk_2  PF_1  PF_2
+index                                                                                                                                                                                                                                                                                        
+2003_1102_1117_25   2003_1102_1117    2003      1102      1117      25      0     A     H       57       52     16     16     36     43       7       6      20      14     18     14     22     21     3     7    24    17     10      8    10     8      5      3      3      0    20    19
+2003_1102_1125_37   2003_1102_1125    2003      1102      1125      37      0     H     A       85       76     26     24     41     49      12      12      23      27     21     16     32     17     4    13    12    19     21     12     5    14      5      2      1      0    19    25
+2003_1102_1140_117  2003_1102_1140    2003      1102      1140     117      0     H     A       43       56     14     19     36     34       4       2      20      10     11     16     20     22     4     5    15    24      8      6    14    14      5      9      1      1    19    18
+2003_1102_1140_91   2003_1102_1140    2003      1102      1140      91      0     A     H       33       65     11     21     51     45       5       8      33      14      6     15     10     23     6    17    15    38      7     16     9    16      7      4      2      3    22    15
+2003_1102_1161_103  2003_1102_1161    2003      1102      1161     103      0     H     A       80       75     23     29     32     49       7      10      12      18     27      7     34     10     0    11    11    13     13     12    15    18     13      8      1      4    15    29
+...                            ...     ...       ...       ...     ...    ...   ...   ...      ...      ...    ...    ...    ...    ...     ...     ...     ...     ...    ...    ...    ...    ...   ...   ...   ...   ...    ...    ...   ...   ...    ...    ...    ...    ...   ...   ...
+2025_3476_3478_77   2025_3476_3478    2025      3476      3478      77      0     A     H       67       69     27     23     60     50       9       7      26      20      4     16      5     20    11     9    19    20     19     11    14    16      4      5      1      2    19    14
+2025_3476_3479_103  2025_3476_3479    2025      3476      3479     103      0     A     H       69       62     24     25     55     71       9       5      22      32     12      7     16     10     6    11    28    22     13      9    20    18      6     12      2      0    18    15
+2025_3476_3479_59   2025_3476_3479    2025      3476      3479      59      0     H     A       72       54     26     21     56     56       7       4      18      19     13      8     15     10     8     2    29    22     17      9    19    16     11      6      2      1    19    17
+2025_3478_3479_66   2025_3478_3479    2025      3478      3479      66      0     A     H       52       63     16     23     44     58       5      10      16      30     15      7     23      9     6     7    25    24      6     12    22    16     10     10      1      0    14    18
+2025_3478_3479_96   2025_3478_3479    2025      3478      3479      96      0     H     A       60       58     24     24     58     54       4       6      14      22      8      4      9      6     7     2    27    23     16     11    15    17      8      4      0      1    14    16
+
+[198374 rows x 36 columns]
+
+   RegularSeason 232307
+     NCAATourney   2717
+SecondaryTourney   2053
+                 237077
+GameStatsByTeam
+                              byID_index              ID  DayNum  Season  TeamID  NumOT Loc  Score  FGM  FGA  FGM3  FGA3  FTM  FTA  OR  DR  Ast  TO  Stl  Blk  PF Loc_o  Score_o  FGM_o  FGA_o  FGM3_o  FGA3_o  FTM_o  FTA_o  OR_o  DR_o  Ast_o  TO_o  Stl_o  Blk_o  PF_o
+index                                                                                                                                                                                                                                                                    
+2003_1102_1117_25_1    2003_1102_1117_25  2003_1102_1117      25    2003    1102      0   A     57   16   36     7    20   18   22   3  24   10  10    5    3  20     H       52     16     43       6      14     14     21     7    17      8     8      3      0    19
+2003_1102_1117_25_2    2003_1102_1117_25  2003_1102_1117      25    2003    1117      0   H     52   16   43     6    14   14   21   7  17    8   8    3    0  19     A       57     16     36       7      20     18     22     3    24     10    10      5      3    20
+2003_1102_1125_37_1    2003_1102_1125_37  2003_1102_1125      37    2003    1102      0   H     85   26   41    12    23   21   32   4  12   21   5    5    1  19     A       76     24     49      12      27     16     17    13    19     12    14      2      0    25
+2003_1102_1125_37_2    2003_1102_1125_37  2003_1102_1125      37    2003    1125      0   A     76   24   49    12    27   16   17  13  19   12  14    2    0  25     H       85     26     41      12      23     21     32     4    12     21     5      5      1    19
+2003_1102_1140_117_1  2003_1102_1140_117  2003_1102_1140     117    2003    1102      0   H     43   14   36     4    20   11   20   4  15    8  14    5    1  19     A       56     19     34       2      10     16     22     5    24      6    14      9      1    18
+...                                  ...             ...     ...     ...     ...    ...  ..    ...  ...  ...   ...   ...  ...  ...  ..  ..  ...  ..  ...  ...  ..   ...      ...    ...    ...     ...     ...    ...    ...   ...   ...    ...   ...    ...    ...   ...
+2025_3476_3479_59_2    2025_3476_3479_59  2025_3476_3479      59    2025    3479      0   A     54   21   56     4    19    8   10   2  22    9  16    6    1  17     H       72     26     56       7      18     13     15     8    29     17    19     11      2    19
+2025_3478_3479_66_1    2025_3478_3479_66  2025_3478_3479      66    2025    3478      0   A     52   16   44     5    16   15   23   6  25    6  22   10    1  14     H       63     23     58      10      30      7      9     7    24     12    16     10      0    18
+2025_3478_3479_66_2    2025_3478_3479_66  2025_3478_3479      66    2025    3479      0   H     63   23   58    10    30    7    9   7  24   12  16   10    0  18     A       52     16     44       5      16     15     23     6    25      6    22     10      1    14
+2025_3478_3479_96_1    2025_3478_3479_96  2025_3478_3479      96    2025    3478      0   H     60   24   58     4    14    8    9   7  27   16  15    8    0  14     A       58     24     54       6      22      4      6     2    23     11    17      4      1    16
+2025_3478_3479_96_2    2025_3478_3479_96  2025_3478_3479      96    2025    3479      0   A     58   24   54     6    22    4    6   2  23   11  17    4    1  16     H       60     24     58       4      14      8      9     7    27     16    15      8      0    14
+
+[396748 rows x 36 columns]
+
