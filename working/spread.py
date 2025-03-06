@@ -30,6 +30,9 @@ else:
 
 import xgboost as xgb
 from sklearn.model_selection import KFold
+from sklearn.metrics import brier_score_loss
+from scipy.stats import norm
+from scipy.optimize import minimize
 
 pd.set_option("display.expand_frame_repr", False)
 pd.set_option("display.max_columns", None)
@@ -336,7 +339,7 @@ for fold_n, (i_fold, i_oof) in enumerate(kfold.split(train.index)):
     y_pred_oof[i_oof] = m.predict(X.iloc[i_oof])
 
 
-# In[20]:
+# In[12]:
 
 
 suptitle = "NCAA D1 basketball 2010-2025 men's and women's"
@@ -362,5 +365,81 @@ else:
     )
     print()
 
+
+# In[18]:
+
+
+y_pred_prob = 1 / (1 + np.exp(-y_pred_oof * 0.25))
+y_true = (train["Spread_1"] > 0).astype(int)
+brier_score = np.mean((y_pred_prob - y_true) ** 2)
+print(f"Brier score: {brier_score:.4f}")
+
+
+# claude.ai:
+#
+# > A Brier score of 0.1479 represents the mean squared error between your predicted win probabilities and the actual outcomes. Let me help you interpret this result:
+# >
+# > #### Understanding the Brier Score
+# >
+# > The Brier score ranges from 0 to 1, where:
+# >
+# > - 0 is perfect prediction (you predicted exactly the right probability for every game)
+# > - 0.25 represents the score you'd get by always predicting 50% probability (random guessing)
+# > - 1 is the worst possible score (you predicted with complete confidence the opposite of what happened)
+# >
+# > Your score of 0.1479 is significantly better than random guessing (0.25), which indicates your model has meaningful predictive power.
+# >
+# > #### Contextualizing Your Score
+# >
+# > For NCAA basketball game predictions:
+# > - Professional betting markets and sophisticated models typically achieve Brier scores in the 0.12-0.16 range
+# > - Your score of 0.1479 falls within this competitive range
+# > - The best models in previous March Machine Learning Mania competitions have achieved scores around 0.12-0.13
+# >
+# > #### What This Means
+# >
+# > Your model is capturing meaningful patterns in the data. The 0.1479 Brier score suggests that:
+# > - Your approach of using team season statistics to predict point spreads, then converting to win probabilities, is valid
+# > - The model has good discriminative power (distinguishing between likely wins and losses)
+# > - The probability calibration (using the sigmoid with scaling factor 0.25) is reasonably effective
+#
+# Note: There is data leakage in my approach, which artificially increases the out-of-fold cross-validation scores over scores involving real data (future games.) Specifically, the data leakage is that for regular season games, the season stats in X (the features used to fit/train the model) include the game being predicted. I am accepting this trade-off because it is a simpler, more efficient approach that gets more rows in my train dataset (vs. only predicting hitorical tournament games.) I could remove the game being predicted from the season stats for each row in the train dataset, but that would take more work with potentially little benefit and could greatly increase run time.
+
+# In[19]:
+
+
+suptitle = "NCAA D1 basketball 2010-2025 men's and women's"
+title = "Predicted win probabilities distribution"
+
+if is_notebook:
+    plt.figure(figsize=(10, 6))
+    sns.histplot(y_pred_prob, bins=50, kde=True)
+    plt.axvline(0.5, color="red", linestyle="--", alpha=0.7, label="50% threshold")
+    plt.xlabel("Predicted Win Probability")
+    plt.ylabel("Count")
+    plt.suptitle(suptitle)
+    plt.title(title)
+    plt.legend()
+    plt.show()
+else:
+    print()
+    print(suptitle)
+    print(title)
+    hist, _ = np.histogram(y_pred_prob, bins=50)
+    print(asciichartpy.plot(hist, {"height": 10, "width": 80}))
+    print()
+
+
+# claude.ai:
+#
+# > The distribution actually reveals something important about your modeling approach. It's not centered around 0.5, and that's very interesting!
+# The bimodal (two-peaked) distribution you're seeing with high peaks near 0 and 1 tells us that your sigmoid transformation is creating very confident predictions. The scaling factor of 0.25 in your sigmoid function is making the transformation quite steep, which pushes many probabilities toward the extremes.
+# This pattern indicates:
+# >
+# > Your model is making strong, polarized predictions rather than cautious ones hovering around 0.5.
+# The point spread predictions from your model are being transformed in a way that expresses high confidence - most games are predicted as either strong wins or strong losses.
+# Since your Brier score is 0.1479 (which is quite good), many of these confident predictions are actually correct! If they weren't, your Brier score would be much worse.
+# >
+# > The distribution doesn't need to be centered at 0.5. In fact, if your model has good discriminative power, and games truly do have clear favorites and underdogs, you would expect to see more predictions at the extremes than in the middle.
 
 # In[ ]:
