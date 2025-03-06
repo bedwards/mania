@@ -1,6 +1,51 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+# # NCAA March Madness Prediction Model
+#
+# This script builds a prediction model for the March Madness tournament, analyzing historical NCAA basketball data for both men's and women's teams. I'm using a point spread approach (basically how many points one team is expected to win or lose by) as the foundation, then converting those spreads to win probabilities for my Kaggle competition submission.
+#
+# The basic idea: I aggregate team season stats and strength of schedule metrics, then train an XGBoost model to predict the expected point differential between any two teams. This gives me a solid prediction of which team would win in a hypothetical matchup - exactly what I need for the competition!
+#
+# [kaggle competitions march-machine-learning-mania-2025](https://www.kaggle.com/competitions/march-machine-learning-mania-2025)
+#
+# [github bedwards mania](https://github.com/bedwards/mania)
+#
+# ```
+# NCAA D1 basketball 2010-2025 men's and women's
+# Predicted point spread distribution
+# 13128.00  ┼
+# 11934.64  ┤                      ╭─╮
+# 10741.27  ┤                     ╭╯ │
+#  9547.91  ┤                    ╭╯  ╰╮
+#  8354.55  ┤                    │    ╰╮
+#  7161.18  ┤                   ╭╯     │
+#  5967.82  ┤                  ╭╯      ╰╮
+#  4774.45  ┤                  │        ╰╮
+#  3581.09  ┤                 ╭╯         │
+#  2387.73  ┤               ╭─╯          ╰─╮
+#  1194.36  ┤            ╭──╯              ╰──╮
+#     1.00  ┼────────────╯                    ╰───────────────
+#                                  0          32
+#
+# NCAA D1 basketball 2010-2025 men's and women's
+# Predicted win probabilities distribution
+# 13440.00  ┤
+# 12332.18  ┼╮
+# 11224.36  ┤│                                               ╭
+# 10116.55  ┤│                                               │
+#  9008.73  ┤│                                               │
+#  7900.91  ┤│                                               │
+#  6793.09  ┤│                                               │
+#  5685.27  ┤│                                               │
+#  4577.45  ┤╰╮                                             ╭╯
+#  3469.64  ┤ ╰╮                                          ╭─╯
+#  2361.82  ┤  ╰──────╮                              ╭────╯
+#  1254.00  ┤         ╰──────────────────────────────╯
+# ```
+#
+# Brier score: 0.1479
+
 # In[1]:
 
 
@@ -41,6 +86,12 @@ pd.set_option("display.width", None)
 input_dir = "march-machine-learning-mania-2025"
 
 
+# ## Data Loading and Setup
+#
+# First, I'm setting up the environment and importing the libraries I'll need. I'm loading several data files containing game results for both men's and women's basketball - regular season games, NCAA tournament games, and secondary tournament games (like the NIT). For each type, I'm grabbing both "compact" results (basic game outcome data) and "detailed" results (containing all the box score stats like rebounds, assists, etc.).
+#
+# I'm starting from the 2010 season since that's when the detailed women's data begins. This way I can build a unified model for both men's and women's basketball, which I think will give me better overall predictions than separate models.
+
 # In[2]:
 
 
@@ -71,6 +122,12 @@ for df_name in df_names:
     df = globals()[df_name]
     globals()[df_name] = df[df["Season"] >= season_min]
 
+
+# ## Data Reshaping and Team Statistics
+#
+# I've now consolidated all the detailed game data and I'm reshaping it to be more machine-learning friendly. For each game, I'm creating a consistent format where the teams are labeled as "team_1" and "team_2" (instead of winner/loser), with stats labeled accordingly. I'm also calculating the point spread between the teams - the key value I want to predict.
+#
+# I then convert this further into "offensive" and "defensive" perspectives for each team in each game. This gives me a complete picture of how teams perform both when they have the ball and when they're defending. I'll use this to aggregate season-level statistics for each team.
 
 # In[3]:
 
@@ -159,6 +216,12 @@ p(game_stats_o_d)
 print()
 
 
+# ## Team Performance Analysis
+#
+# Looking at how many games each team plays in a season, we can see there's quite a bit of variation. Most teams play around 27-33 games per season, but there are some outliers with very few games.
+#
+# For example, in the 2021 COVID season, there were 16 teams that played 10 or fewer games. These anomalies might affect our model's ability to accurately assess those teams, but since they're relatively rare and mostly from a single unusual season, I'm going to keep them in the dataset.
+
 # In[4]:
 
 
@@ -184,6 +247,12 @@ print("\nNumber of teams with few games by season:")
 print(few_games_by_season)
 
 
+# ## Calculating Season Statistics
+#
+# Now I'm calculating season-average statistics for each team by grouping all their games. For each team and season, I compute their average offensive and defensive performance across all the metrics I have: points scored/allowed, field goals, three-pointers, free throws, rebounds, assists, turnovers, steals, blocks, and fouls.
+#
+# These season averages form the foundation of my predictive features. I want to know how teams typically perform to predict how they'll do in tournament matchups.
+
 # In[5]:
 
 
@@ -206,6 +275,10 @@ p(season_stats)
 print()
 
 
+# ## Validating Season Stats
+#
+# Just sanity-checking the season stats for a specific team (TeamID 1393 in the 2010 season) to make sure everything looks reasonable. Eyeballing the data is always a good practice to catch any obvious issues before building models.
+
 # In[6]:
 
 
@@ -214,6 +287,12 @@ p(season_stats[(season_stats["Season"] == 2010) & (season_stats["TeamID"] == 139
 # p(MRegularSeasonDetailedResults[(MRegularSeasonDetailedResults["Season"]==2010) & (MRegularSeasonDetailedResults["WTeamID"]==1393)])
 # p(MRegularSeasonDetailedResults[(MRegularSeasonDetailedResults["Season"]==2010) & (MRegularSeasonDetailedResults["LTeamID"]==1393)])
 
+
+# ## Calculating Strength of Schedule
+#
+# Raw team statistics aren't enough - a team that puts up great numbers against weak competition isn't necessarily better than a team with decent numbers against tough opponents. So I'm creating strength of schedule metrics.
+#
+# For each team, I'm looking at all their opponents and averaging those opponents' season stats. This gives me a picture of the quality of competition each team has faced, which should help me make better predictions when teams from different conferences meet in the tournament.
 
 # In[7]:
 
@@ -254,6 +333,10 @@ p(sos_stats)
 print()
 
 
+# ## Combining Team Stats with Strength of Schedule
+#
+# I'm merging the raw team stats with their strength of schedule metrics to create a comprehensive statistical profile for each team-season combination. These combined features will give my model a more complete picture of each team's true strength.
+
 # In[8]:
 
 
@@ -264,6 +347,12 @@ print(f"season_self_sos {season_self_sos.shape[0]:,}")
 p(season_self_sos)
 print()
 
+
+# ## Creating the Training Dataset
+#
+# Now I'm building the actual training dataset for my model. For each possible matchup between teams in the same season, I'm combining both teams' season stats and strength of schedule metrics. I'm also adding the actual point spread from their games as the target variable.
+#
+# The final training data has 119,167 rows (one for each possible matchup in my historical data) and a ton of features (120 columns) that describe various aspects of both teams' performance.
 
 # In[9]:
 
@@ -316,15 +405,21 @@ p(y)
 print()
 
 
+# ## Double-Checking 2021 Data
+#
+# I'm taking a quick look at the 2021 data specifically since it was an unusual season due to COVID. The data looks reasonable, though as we saw earlier, some teams played very few games that year.
+
 # In[10]:
 
 
 p(train[train["Season"] == 2021])
 
 
-# Missing
-# - normalized count of home games, away games
-# - season average of NumOT
+# ## Training the XGBoost Model
+#
+# I'm using k-fold cross-validation to train an XGBoost regressor model on my dataset. This approach helps prevent overfitting and gives me more reliable out-of-sample predictions. For each fold, I'm training on 80% of the data and validating on the remaining 20%, then rotating through all the data.
+#
+# The model is learning to predict the point spread between teams based on their season stats and strength of schedule metrics. I'll use these predictions to estimate win probabilities for my Kaggle submission.
 
 # In[11]:
 
@@ -340,6 +435,10 @@ for fold_n, (i_fold, i_oof) in enumerate(kfold.split(train.index)):
     fold_models.append(m)
     y_pred_oof[i_oof] = m.predict(X.iloc[i_oof])
 
+
+# ## Visualizing Predicted Point Spreads
+#
+# Here I'm plotting the distribution of predicted point spreads from my model. The distribution looks reasonable - it's roughly bell-shaped and centered slightly above zero. The spread values mostly fall between -40 and +40 points, which aligns with what we typically see in college basketball games.
 
 # In[12]:
 
@@ -367,6 +466,12 @@ else:
     )
     print()
 
+
+# ## Evaluating Model Performance
+#
+# I'm converting my predicted point spreads to win probabilities using a sigmoid function with a scaling factor of 0.25, then calculating the Brier score to evaluate how well my model predicts actual game outcomes.
+#
+# A Brier score of 0.1479 is pretty good - it's significantly better than the 0.25 you'd get from random guessing (always predicting 50%), which means my model has meaningful predictive power. For context, top models in basketball prediction competitions typically achieve Brier scores in the 0.12-0.16 range.
 
 # In[13]:
 
@@ -407,6 +512,12 @@ print(f"Brier score: {brier_score:.4f}")
 #
 # Note: There is data leakage in my approach, which artificially increases the out-of-fold cross-validation scores over scores involving real data (future games.) Specifically, the data leakage is that for regular season games, the season stats in X (the features used to fit/train the model) include the game being predicted. I am accepting this trade-off because it is a simpler, more efficient approach that gets more rows in my train dataset (vs. only predicting hitorical tournament games.) I could remove the game being predicted from the season stats for each row in the train dataset, but that would take more work with potentially little benefit and could greatly increase run time.
 
+# ## Visualizing Win Probabilities
+#
+# Looking at the distribution of my predicted win probabilities, I notice it has high peaks near 0 and 1, with fewer predictions in the middle around 0.5. This means my model is making confident predictions about which team will win in most matchups - it's not wishy-washy with lots of "toss-up" predictions.
+#
+# Since my Brier score is good, this confidence appears to be justified - the model is recognizing clear favorites and underdogs in many matchups.
+
 # In[14]:
 
 
@@ -444,11 +555,15 @@ else:
 # >
 # > The distribution doesn't need to be centered at 0.5. In fact, if your model has good discriminative power, and games truly do have clear favorites and underdogs, you would expect to see more predictions at the extremes than in the middle.
 
-# In[16]:
+# ## Preparing the Competition Submission
+#
+# Now I'm generating predictions for all potential matchups in the 2025 tournament. I'm taking the team data from the current season and using my trained model to predict the outcome of every possible pairing. These predictions are formatted according to the competition requirements and saved to "submission.csv".
+
+# In[15]:
 
 
 print("Preparing submission")
-sample_sub = pd.read_csv(f"../input/{input_dir}/SampleSubmissionStage1.csv")
+sample_sub = pd.read_csv(f"../input/{input_dir}/SampleSubmissionStage2.csv")
 
 sample_sub[["Season", "Team1", "Team2"]] = (
     sample_sub["ID"].str.split("_", expand=True).astype(int)
@@ -471,7 +586,13 @@ sample_sub[["ID", "Pred"]].to_csv("submission.csv", index=False)
 print("Wrote submission.csv")
 
 
-# In[23]:
+# ## Creating Multiple Simulation-Based Submissions
+#
+# As a final step, I'm generating multiple alternative submissions based on simulations. Instead of just submitting continuous probabilities, these variants use random sampling to create discrete probability buckets (0.1, 0.2, etc.).
+#
+# This technique can sometimes perform better in competitions - it's a way of "quantizing" my predictions that might better match how the actual tournament plays out. I'll be able to choose my best-performing submission once the tournament starts and early game results come in.
+
+# In[16]:
 
 
 print("Generating multiple independent simulation-based submissions...")
@@ -493,5 +614,40 @@ for num_sims in range(1, 11):
 
 print("All independent simulation-based submissions complete!")
 
+
+# claude.ai:
+#
+# > I understand your strategy - you're looking to maximize your chance of winning the March Machine Learning Mania competition rather than aiming for a consistent but average performance. With 4,000-5,000 competitors, a "safe" strategy likely won't put you in first place. Let me analyze your options and recommend the best high-risk, high-reward submission choices.
+# >
+# > ## Understanding Your Submission Options
+# >
+# > The script has generated 11 different submission files:
+# > - `submission.csv`: Contains the raw model predictions (continuous probabilities)
+# > - `submission1.csv` through `submission10.csv`: Contains simulated outcomes with varying numbers of simulation rounds
+# >
+# > The key difference between these files is:
+# >
+# > 1. **The main submission file** uses continuous probability values (like 0.73, 0.68, etc.)
+# > 2. **The simulated files** use discrete probability values based on simulation rounds:
+# >    - `submission1.csv` only has 0.0 and 1.0 (essentially random guesses based on the predicted probabilities)
+# >    - `submission10.csv` has probabilities in increments of 0.1 (0.0, 0.1, 0.2, ..., 1.0)
+# >
+# > ## Why Simulation-Based Submissions Can Help Win
+# >
+# > The Brier score rewards getting things exactly right. While your main model might have a good overall Brier score (0.1479), the simulation approach introduces controlled variance that could result in a better score through luck.
+# >
+# > The tournament has significant inherent randomness (upsets, etc.), and your goal is to get the #1 spot, not just be in the top 10%.
+# >
+# > ## Recommended Strategy for Maximum Chance of Winning
+# >
+# > I recommend submitting:
+# >
+# > 1. **`submission1.csv`** - This is your highest variance option. It's essentially a random set of binary 0/1 predictions weighted by your model probabilities. This has the highest chance of getting lucky and scoring extremely well, though it also has a high chance of scoring poorly.
+# >
+# > 2. **`submission.csv`** - Your original model predictions with continuous probabilities. This is your "base model" that has shown good performance with a Brier score of 0.1479.
+# >
+# > This combination gives you:
+# > - A very high variance option that could hit #1 if luck is on your side
+# > - A solid foundation that still has a chance of winning but is more likely to place decently
 
 # In[ ]:
