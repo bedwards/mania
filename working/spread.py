@@ -45,6 +45,75 @@
 # ```
 #
 # Brier score: 0.1479
+#
+# #### Top 25 Women's and Men's based on my model
+#
+# - Tourney Win: Probability of winning the NCAA tournament (estimated by winning 6 consecutive games). Higher values indicate stronger championship contenders.
+# - PPG: Points Per Game scored by the team. Measures raw offensive output without accounting for pace.
+# - Wtd Diff: Weighted Point Differential - the average margin of victory adjusted for strength of schedule. Positive numbers indicate winning teams; higher values represent more dominant teams.
+# - SOS: Strength of Schedule - average offensive rating of opponents faced. Higher numbers indicate a more difficult schedule.
+# - Off Eff: Offensive Efficiency - points scored per 100 possessions. This pace-adjusted metric better reflects offensive quality than raw points per game.
+# - Ast/TO: Assist to Turnover Ratio - measures a team's ball control and passing efficiency. Values above 1.0 indicate more assists than turnovers; elite teams often exceed 1.5.
+#
+# ```
+# Top 25 Women's Teams (2025)
+# Rank Team               Tourney Win  PPG    Wtd Diff  SOS    Off Eff  Ast/TO
+# ----------------------------------------------------------------------------
+# 1    Connecticut           1.57%     80.9    +29.5    67.2    115.5   2.04
+# 2    Texas                 1.57%     82.7    +28.9    72.4    111.9   1.32
+# 3    Notre Dame            1.56%     86.7    +28.5    70.5    111.5   1.20
+# 4    USC                   1.55%     82.1    +27.0    70.2    107.3   1.24
+# 5    South Carolina        1.54%     80.2    +26.0    73.8    110.0   1.37
+# 6    UCLA                  1.54%     79.6    +25.8    71.1    109.0   1.37
+# 7    Kansas St             1.54%     80.4    +25.4    67.8    112.1   1.82
+# 8    LSU                   1.53%     86.3    +24.8    72.5    109.0   1.03
+# 9    West Virginia         1.53%     77.1    +24.4    67.8    104.2   0.90
+# 10   TCU                   1.50%     79.2    +23.0    67.8    114.3   1.76
+# 11   Mississippi           1.50%     76.4    +22.7    70.4    105.6   1.34
+# 12   Tennessee             1.49%     90.0    +22.5    73.3    110.0   1.12
+# 13   Baylor                1.46%     80.0    +20.9    67.0    106.6   1.43
+# 14   Michigan St           1.44%     81.0    +20.3    69.6    105.0   1.28
+# 15   Alabama               1.44%     78.8    +20.3    71.1    107.7   1.12
+# 16   Florida St            1.44%     90.8    +20.2    69.5    112.3   1.31
+# 17   Oklahoma St           1.43%     78.0    +19.8    68.0    105.0   0.97
+# 18   Ohio St               1.41%     80.0    +19.3    70.4    103.8   1.26
+# 19   Vanderbilt            1.41%     84.7    +19.3    70.9    109.3   1.21
+# 20   Fairfield             1.39%     74.2    +18.9    61.1    106.5   1.40
+# 21   Oklahoma              1.38%     85.5    +18.6    71.4    103.3   1.14
+# 22   Duke                  1.38%     75.4    +18.5    72.0    102.4   1.19
+# 23   Harvard               1.37%     70.3    +18.4    61.8    102.3   1.05
+# 24   North Carolina        1.34%     71.9    +17.6    70.6    100.4   1.21
+# 25   Utah                  1.32%     77.8    +17.3    69.9    107.6   1.24
+#
+# Top 25 Men's Teams (2025)
+# Rank Team               Tourney Win  PPG    Wtd Diff  SOS    Off Eff  Ast/TO
+# ----------------------------------------------------------------------------
+# 1    Duke                  2.21%     81.0    +20.7    74.6    122.9   1.81
+# 2    Gonzaga               2.09%     88.0    +18.4    73.4    121.1   2.15
+# 3    Houston               2.08%     75.4    +18.2    74.3    117.1   1.55
+# 4    Florida               2.06%     83.8    +17.9    74.9    118.7   1.52
+# 5    Auburn                2.04%     85.1    +17.7    77.0    122.4   1.93
+# 6    Maryland              1.97%     83.5    +16.7    74.2    117.0   1.50
+# 7    Tennessee             1.81%     74.6    +15.0    77.4    114.0   1.59
+# 8    Texas Tech            1.80%     81.8    +14.8    73.7    119.1   1.68
+# 9    Iowa St               1.78%     81.3    +14.7    74.1    115.3   1.36
+# 10   Missouri              1.70%     82.6    +14.0    74.6    119.4   1.34
+# 11   VCU                   1.68%     77.4    +13.8    72.1    113.9   1.39
+# 12   St Mary's CA          1.66%     74.5    +13.6    75.1    115.1   1.77
+# 13   UC San Diego          1.64%     78.0    +13.5    71.7    115.0   1.62
+# 14   St John's             1.54%     78.2    +12.7    73.4    107.0   1.48
+# 15   Michigan St           1.46%     79.1    +12.1    75.4    113.8   1.58
+# 16   Alabama               1.43%     90.3    +11.9    77.6    118.4   1.34
+# 17   Arizona               1.43%     81.0    +11.9    74.8    112.5   1.45
+# 18   Wisconsin             1.42%     82.0    +11.9    75.9    118.3   1.61
+# 19   Illinois              1.42%     83.9    +11.8    75.0    114.0   1.26
+# 20   Yale                  1.40%     82.2    +11.7    72.9    117.0   1.59
+# 21   BYU                   1.38%     80.2    +11.6    72.4    116.1   1.52
+# 22   Clemson               1.35%     77.4    +11.4    74.9    115.1   1.42
+# 23   Michigan              1.28%     81.6    +10.9    75.1    112.8   1.18
+# 24   SMU                   1.26%     82.1    +10.8    73.1    115.8   1.46
+# 25   Louisville            1.26%     79.5    +10.8    74.5    114.0   1.35
+# ```
 
 # In[1]:
 
@@ -661,5 +730,78 @@ print("All independent simulation-based submissions complete!")
 # > This combination gives you:
 # > - A very high variance option that could hit #1 if luck is on your side
 # > - A solid foundation that still has a chance of winning but is more likely to place decently
+
+# ## Team Ranking and Final Output
+#
+# Finally, I'm generating some advanced metrics for each team and creating a ranking of the top teams for the 2025 tournament - essentially a power ranking based on my model. This gives me (and you!) a quick reference for which teams might be the strongest contenders.
+#
+# For each team, I'm calculating:
+# - Estimated possessions per game using the standard basketball formula
+# - Offensive efficiency (points per 100 possessions)
+# - Assist-to-turnover ratio (a key indicator of team discipline)
+# - Three-point attempt rate (percentage of shots taken from beyond the arc)
+# - Weighted point differential that accounts for strength of schedule
+# - Win probability for a single game against an average tournament team
+# - Tournament win probability (the chance of winning 6 games in a row)
+#
+# The final rankings show Connecticut, Texas, and Notre Dame as the clear favorites for the women's tournament, while Duke, Gonzaga, and Houston lead the men's projections. Check out those offensive efficiency numbers for Duke and Gonzaga - over 120 points per 100 possessions is elite-level offense!
+
+# In[19]:
+
+
+m_teams = pd.read_csv(f"../input/{input_dir}/MTeams.csv")
+w_teams = pd.read_csv(f"../input/{input_dir}/WTeams.csv")
+stats_2025 = season_self_sos[season_self_sos["Season"] == 2025]
+w_stats = stats_2025[stats_2025["TeamID"] >= 3000].copy()
+m_stats = stats_2025[stats_2025["TeamID"] < 3000].copy()
+
+for df in [w_stats, m_stats]:
+    df["poss"] = (
+        df["FGA_o_self"] - df["OR_o_self"] + df["TO_o_self"] + 0.44 * df["FTA_o_self"]
+    )
+    df["off_eff"] = 100 * df["Score_o_self"] / df["poss"]
+    df["ast_to"] = df["Ast_o_self"] / df["TO_o_self"]
+    df["three_rate"] = 100 * df["FGA3_o_self"] / df["FGA_o_self"]
+    df["wtd_diff"] = df["Spread_o_self"] * (
+        df["Score_o_sos"] / df["Score_o_sos"].mean()
+    )
+    df["win_prob"] = 1 / (1 + np.exp(-df["wtd_diff"] * 0.2))
+    df["tourney_win_prob"] = df["win_prob"] ** 6
+
+w_stats["tourney_win_prob"] = (
+    w_stats["tourney_win_prob"] / w_stats["tourney_win_prob"].sum()
+)
+m_stats["tourney_win_prob"] = (
+    m_stats["tourney_win_prob"] / m_stats["tourney_win_prob"].sum()
+)
+
+w_top25 = (
+    w_stats.sort_values("tourney_win_prob", ascending=False)
+    .head(25)
+    .merge(w_teams[["TeamID", "TeamName"]], on="TeamID")
+)
+m_top25 = (
+    m_stats.sort_values("tourney_win_prob", ascending=False)
+    .head(25)
+    .merge(m_teams[["TeamID", "TeamName"]], on="TeamID")
+)
+
+
+def print_rankings(df, title):
+    print(f"\n{title}")
+    print(
+        f"{'Rank':<4} {'Team':<18} {'Tourney Win':<10} {'PPG':<6} {'Wtd Diff':<8} {'SOS':<6} {'Off Eff':<8} {'Ast/TO':<6}"
+    )
+    print("-" * 70)
+
+    for i, row in df.reset_index(drop=True).iterrows():
+        print(
+            f"{i + 1:<4} {row['TeamName']:<18} {row['tourney_win_prob'] * 100:7.2f}%  {row['Score_o_self']:5.1f} {row['wtd_diff']:+7.1f} {row['Score_o_sos']:5.1f} {row['off_eff']:7.1f} {row['ast_to']:5.2f}"
+        )
+
+
+print_rankings(w_top25, "Top 25 Women's Teams (2025)")
+print_rankings(m_top25, "Top 25 Men's Teams (2025)")
+
 
 # In[ ]:
