@@ -2,7 +2,7 @@
 
 ```
 NCAA D1 basketball 2010-2025 men's and women's
-Out-of-fold cross-validation predictions
+Predicted point spread distribution
 13128.00  ┼
 11934.64  ┤                      ╭─╮
 10741.27  ┤                     ╭╯ │

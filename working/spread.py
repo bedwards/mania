@@ -343,7 +343,7 @@ for fold_n, (i_fold, i_oof) in enumerate(kfold.split(train.index)):
 
 
 suptitle = "NCAA D1 basketball 2010-2025 men's and women's"
-title = "Out-of-fold cross-validation predictions"
+title = "Predicted point spread distribution"
 
 if is_notebook:
     sns.histplot(y_pred_oof, bins=50)
