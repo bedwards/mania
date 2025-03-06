@@ -471,4 +471,27 @@ sample_sub[["ID", "Pred"]].to_csv("submission.csv", index=False)
 print("Wrote submission.csv")
 
 
+# In[23]:
+
+
+print("Generating multiple independent simulation-based submissions...")
+base_ids = sample_sub["ID"].copy()
+probabilities = sample_sub["Pred"].values
+num_matchups = len(probabilities)
+
+for num_sims in range(1, 11):
+    random_values = np.random.random((num_sims, num_matchups))
+    sim_results = (random_values < probabilities).astype(int)
+    submission = pd.DataFrame(
+        {"ID": base_ids, "Pred": sim_results.sum(axis=0) / num_sims}
+    )
+    filename = f"submission{num_sims}.csv"
+    submission.to_csv(filename, index=False)
+    print(
+        f"Wrote {filename:>16}, simulation rounds: {num_sims:>2}, win probabilities: {[f"{p:.2f}" for p in sorted(np.unique(submission['Pred']))]}"
+    )
+
+print("All independent simulation-based submissions complete!")
+
+
 # In[ ]:
