@@ -562,6 +562,15 @@ else:
 # In[15]:
 
 
+def to_csv(df, fn):
+    df.to_csv(fn, index=False)
+    with open(fn, "r+") as f:
+        content = f.read()
+        f.seek(0)
+        f.truncate()
+        f.write(content.rstrip("\n"))
+
+
 print("Preparing submission")
 sample_sub = pd.read_csv(f"../input/{input_dir}/SampleSubmissionStage2.csv")
 
@@ -582,7 +591,7 @@ for col in X.columns:
 ensemble_preds = np.mean([model.predict(X_submit) for model in fold_models], axis=0)
 win_probs = 1 / (1 + np.exp(-ensemble_preds * 0.25))
 sample_sub["Pred"] = win_probs
-sample_sub[["ID", "Pred"]].to_csv("submission.csv", index=False)
+to_csv(sample_sub[["ID", "Pred"]], "submission.csv")
 print("Wrote submission.csv")
 
 
@@ -603,13 +612,16 @@ num_matchups = len(probabilities)
 for num_sims in range(1, 11):
     random_values = np.random.random((num_sims, num_matchups))
     sim_results = (random_values < probabilities).astype(int)
+
     submission = pd.DataFrame(
         {"ID": base_ids, "Pred": sim_results.sum(axis=0) / num_sims}
     )
+
     filename = f"submission{num_sims}.csv"
-    submission.to_csv(filename, index=False)
+    to_csv(submission, filename)
+
     print(
-        f"Wrote {filename:>16}, simulation rounds: {num_sims:>2}, win probabilities: {[f"{p:.2f}" for p in sorted(np.unique(submission['Pred']))]}"
+        f"Wrote {filename:>16}, simulation rounds: {num_sims:>2}, win probabilities: {[f'{p:.2f}' for p in sorted(np.unique(submission['Pred']))]}"
     )
 
 print("All independent simulation-based submissions complete!")
