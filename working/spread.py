@@ -330,12 +330,14 @@ p(train[train["Season"] == 2021])
 
 
 kfold = KFold(shuffle=True, random_state=42)
-m = xgb.XGBRegressor()
+fold_models = []
 y_pred_oof = np.zeros(len(train))
 
 for fold_n, (i_fold, i_oof) in enumerate(kfold.split(train.index)):
     print(f"fold {fold_n}", flush=True)
+    m = xgb.XGBRegressor()
     m.fit(X.iloc[i_fold], y.iloc[i_fold])
+    fold_models.append(m)
     y_pred_oof[i_oof] = m.predict(X.iloc[i_oof])
 
 
@@ -366,7 +368,7 @@ else:
     print()
 
 
-# In[18]:
+# In[13]:
 
 
 y_pred_prob = 1 / (1 + np.exp(-y_pred_oof * 0.25))
@@ -405,7 +407,7 @@ print(f"Brier score: {brier_score:.4f}")
 #
 # Note: There is data leakage in my approach, which artificially increases the out-of-fold cross-validation scores over scores involving real data (future games.) Specifically, the data leakage is that for regular season games, the season stats in X (the features used to fit/train the model) include the game being predicted. I am accepting this trade-off because it is a simpler, more efficient approach that gets more rows in my train dataset (vs. only predicting hitorical tournament games.) I could remove the game being predicted from the season stats for each row in the train dataset, but that would take more work with potentially little benefit and could greatly increase run time.
 
-# In[19]:
+# In[14]:
 
 
 suptitle = "NCAA D1 basketball 2010-2025 men's and women's"
@@ -441,5 +443,32 @@ else:
 # Since your Brier score is 0.1479 (which is quite good), many of these confident predictions are actually correct! If they weren't, your Brier score would be much worse.
 # >
 # > The distribution doesn't need to be centered at 0.5. In fact, if your model has good discriminative power, and games truly do have clear favorites and underdogs, you would expect to see more predictions at the extremes than in the middle.
+
+# In[16]:
+
+
+print("Preparing submission")
+sample_sub = pd.read_csv(f"../input/{input_dir}/SampleSubmissionStage1.csv")
+
+sample_sub[["Season", "Team1", "Team2"]] = (
+    sample_sub["ID"].str.split("_", expand=True).astype(int)
+)
+
+team_data = season_self_sos[season_self_sos["Season"] == 2025].set_index("TeamID")
+X_submit = pd.DataFrame(index=sample_sub.index)
+
+for col in X.columns:
+    parts = col.split("_")
+    team_num = parts[-1]
+    base_col = "_".join(parts[:-1])
+    team_id_col = f"Team{team_num}"
+    X_submit[col] = sample_sub[team_id_col].map(team_data[base_col])
+
+ensemble_preds = np.mean([model.predict(X_submit) for model in fold_models], axis=0)
+win_probs = 1 / (1 + np.exp(-ensemble_preds * 0.25))
+sample_sub["Pred"] = win_probs
+sample_sub[["ID", "Pred"]].to_csv("submission.csv", index=False)
+print("Wrote submission.csv")
+
 
 # In[ ]:
